@@ -1,0 +1,74 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 6 files
+Detected 2 issues that require attention
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+File: encoders/seq_encoder.py
+--------------------------------------------------------------------------------
+encoders/seq_encoder.py:66:27: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+encoders/seq_encoder.py:76:15: WARNING: tf.nn.embedding_lookup requires manual check. `partition_strategy` has been removed from tf.nn.embedding_lookup.  The 'div' strategy will be used by default.
+================================================================================
+Detailed log follows:
+
+================================================================================
+================================================================================
+Input tree: 'encoders'
+================================================================================
+--------------------------------------------------------------------------------
+Processing file 'encoders/masked_seq_encoder.py'
+ outputting to 'encoders/masked_seq_encoder.py'
+--------------------------------------------------------------------------------
+
+28:12: INFO: Renamed 'tf.placeholder' to 'tf.compat.v1.placeholder'
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Processing file 'encoders/__init__.py'
+ outputting to 'encoders/__init__.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Processing file 'encoders/nbow_seq_encoder.py'
+ outputting to 'encoders/nbow_seq_encoder.py'
+--------------------------------------------------------------------------------
+
+26:13: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+31:32: INFO: Added keywords to args of function 'tf.reduce_sum'
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Processing file 'encoders/seq_encoder.py'
+ outputting to 'encoders/seq_encoder.py'
+--------------------------------------------------------------------------------
+
+51:12: INFO: Renamed 'tf.placeholder' to 'tf.compat.v1.placeholder'
+66:27: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+66:27: INFO: Renamed 'tf.get_variable' to 'tf.compat.v1.get_variable'
+67:55: INFO: tf.glorot_uniform_initializer requires manual check. Initializers no longer have the dtype argument in the constructor or partition_info argument in the __call__ method.
+The calls have been converted to compat.v1 for safety (even though they may already have been correct).
+67:55: INFO: Renamed 'tf.glorot_uniform_initializer' to 'tf.compat.v1.glorot_uniform_initializer'
+73:27: INFO: Changing keep_prob arg of tf.nn.dropout to rate
+
+76:15: WARNING: tf.nn.embedding_lookup requires manual check. `partition_strategy` has been removed from tf.nn.embedding_lookup.  The 'div' strategy will be used by default.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Processing file 'encoders/encoder.py'
+ outputting to 'encoders/encoder.py'
+--------------------------------------------------------------------------------
+
+75:12: INFO: Renamed 'tf.placeholder' to 'tf.compat.v1.placeholder'
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Processing file 'encoders/utils/__init__.py'
+ outputting to 'encoders/utils/__init__.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+

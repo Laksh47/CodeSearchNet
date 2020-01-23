@@ -21,7 +21,7 @@ if __name__ == '__main__':
         os.makedirs(destination_dir)
     os.chdir(destination_dir)
 
-    for language in ('java'):
+    for language in ['java']:
         call(['wget', 'https://s3.amazonaws.com/code-search-net/CodeSearchNet/v2/{}.zip'.format(language), '-P', destination_dir, '-O', '{}.zip'.format(language)])
         call(['unzip', '{}.zip'.format(language)])
         call(['rm', '{}.zip'.format(language)])

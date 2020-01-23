@@ -1,0 +1,80 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 1 files
+Detected 3 issues that require attention
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+File: model.py
+--------------------------------------------------------------------------------
+model.py:775:16: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+model.py:826:20: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+model.py:835:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+================================================================================
+Detailed log follows:
+
+================================================================================
+--------------------------------------------------------------------------------
+Processing file 'model.py'
+ outputting to 'model.py'
+--------------------------------------------------------------------------------
+
+132:45: INFO: Renamed 'tf.placeholder' to 'tf.compat.v1.placeholder'
+132:61: INFO: Renamed 'tf.placeholder_with_default' to 'tf.compat.v1.placeholder_with_default'
+148:17: INFO: Renamed 'tf.ConfigProto' to 'tf.compat.v1.ConfigProto'
+154:22: INFO: Renamed 'tf.Session' to 'tf.compat.v1.Session'
+189:18: INFO: Renamed 'tf.Summary' to 'tf.compat.v1.Summary'
+189:36: INFO: Renamed 'tf.Summary' to 'tf.compat.v1.Summary'
+195:70: INFO: Renamed 'tf.GraphKeys' to 'tf.compat.v1.GraphKeys'
+229:12: INFO: Renamed 'tf.set_random_seed' to 'tf.compat.v1.set_random_seed'
+235:40: INFO: tf.summary.FileWriter requires manual check. The TF 1.x summary API cannot be automatically migrated to TF 2.0, so symbols have been converted to tf.compat.v1.summary.* and must be migrated manually. Typical usage will only require changes to the summary writing logic, not to individual calls like scalar(). For examples of the new summary API, see the Effective TF 2.0 migration document or check the TF 2.0 TensorBoard tutorials.
+235:40: INFO: Renamed 'tf.summary.FileWriter' to 'tf.compat.v1.summary.FileWriter'
+244:51: INFO: Renamed 'tf.placeholder' to 'tf.compat.v1.placeholder'
+248:12: INFO: Renamed 'tf.placeholder_with_default' to 'tf.compat.v1.placeholder_with_default'
+253:13: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+256:21: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+262:13: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+275:17: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+280:17: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+295:32: INFO: Added keywords to args of function 'tf.shape'
+299:26: INFO: Added keywords to args of function 'tf.norm'
+299:26: INFO: Renamed keyword argument for tf.norm from keep_dims to keepdims
+300:25: INFO: Added keywords to args of function 'tf.norm'
+300:25: INFO: Renamed keyword argument for tf.norm from keep_dims to keepdims
+310:25: INFO: Renamed 'tf.diag' to 'tf.linalg.tensor_diag'
+310:47: INFO: Added keywords to args of function 'tf.shape'
+312:47: INFO: Renamed 'tf.diag_part' to 'tf.linalg.tensor_diag_part'
+313:47: INFO: Added keywords to args of function 'tf.reduce_max'
+325:29: INFO: Renamed 'tf.diag' to 'tf.linalg.tensor_diag'
+325:51: INFO: Added keywords to args of function 'tf.shape'
+327:47: INFO: Renamed 'tf.diag_part' to 'tf.linalg.tensor_diag_part'
+328:47: INFO: Added keywords to args of function 'tf.reduce_max'
+333:60: INFO: Added keywords to args of function 'tf.shape'
+333:85: INFO: Added keywords to args of function 'tf.shape'
+333:109: INFO: Added keywords to args of function 'tf.shape'
+334:58: INFO: Added keywords to args of function 'tf.shape'
+334:82: INFO: Added keywords to args of function 'tf.shape'
+334:105: INFO: Added keywords to args of function 'tf.shape'
+335:24: INFO: Added keywords to args of function 'tf.transpose'
+337:33: INFO: Added keywords to args of function 'tf.norm'
+340:47: INFO: Renamed 'tf.diag_part' to 'tf.linalg.tensor_diag_part'
+343:42: INFO: Added keywords to args of function 'tf.shape'
+345:30: INFO: Added keywords to args of function 'tf.reduce_sum'
+345:72: INFO: Added keywords to args of function 'tf.reduce_sum'
+350:27: INFO: Added keywords to args of function 'tf.reduce_sum'
+350:60: INFO: Added keywords to args of function 'tf.reduce_sum'
+353:25: INFO: Renamed 'tf.diag_part' to 'tf.linalg.tensor_diag_part'
+358:30: INFO: Added keywords to args of function 'tf.reduce_sum'
+358:44: INFO: Changed tf.to_float call to tf.cast(..., dtype=tf.float32).
+366:24: INFO: Renamed 'tf.train.GradientDescentOptimizer' to 'tf.compat.v1.train.GradientDescentOptimizer'
+368:24: INFO: Renamed 'tf.train.RMSPropOptimizer' to 'tf.compat.v1.train.RMSPropOptimizer'
+372:24: INFO: Renamed 'tf.train.AdamOptimizer' to 'tf.compat.v1.train.AdamOptimizer'
+377:56: INFO: Renamed 'tf.GraphKeys' to 'tf.compat.v1.GraphKeys'
+378:20: INFO: Added keywords to args of function 'tf.gradients'
+762:12: INFO: Renamed 'tf.set_random_seed' to 'tf.compat.v1.set_random_seed'
+773:26: INFO: Renamed 'tf.variables_initializer' to 'tf.compat.v1.variables_initializer'
+773:84: INFO: Renamed 'tf.GraphKeys' to 'tf.compat.v1.GraphKeys'
+775:16: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+826:20: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+835:12: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+--------------------------------------------------------------------------------
+
