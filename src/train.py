@@ -60,6 +60,7 @@ def run_train(model_class: Type[Model],
               max_files_per_dir: Optional[int] = None,
               parallelize: bool = True) -> RichPath:
     model = model_class(hyperparameters, run_name=run_name, model_save_dir=save_folder, log_save_dir=save_folder)
+    # import pdb; pdb.set_trace()
     if os.path.exists(model.model_save_path):
         model = model_restore_helper.restore(RichPath.create(model.model_save_path), is_train=True)
         model.train_log("Resuming training run %s of model %s with following hypers:\n%s" % (run_name,
@@ -98,6 +99,7 @@ def make_run_id(arguments: Dict[str, Any]) -> str:
     user_save_name = arguments.get('--run-name')
     if user_save_name is not None:
         user_save_name = user_save_name[:-len('.pkl')] if user_save_name.endswith('.pkl') else user_save_name
+        # return user_save_name
     else:
         user_save_name = arguments['--model']
     return "%s-%s" % (user_save_name, time.strftime("%Y-%m-%d-%H-%M-%S"))

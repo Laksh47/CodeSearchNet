@@ -113,7 +113,7 @@ if __name__ == '__main__':
         hyper_overrides={})
     
     predictions = []
-    for language in ('python', 'go', 'javascript', 'java', 'php', 'ruby'):
+    for language in ['java']:
         print("Evaluating language: %s" % language)
         definitions = pickle.load(open('../resources/data/{}_dedupe_definitions_v2.pkl'.format(language), 'rb'))
         indexes = [{'code_tokens': d['function_tokens'], 'language': d['language']} for d in tqdm(definitions)]
