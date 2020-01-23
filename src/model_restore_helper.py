@@ -3,21 +3,21 @@ from typing import Dict, Any, Optional, Type
 import tensorflow as tf
 from dpu_utils.utils import RichPath
 
-from models import Model, NeuralBoWModel, RNNModel, SelfAttentionModel, ConvolutionalModel, ConvSelfAttentionModel
+from models import Model, NeuralBoWModel
 
 
 def get_model_class_from_name(model_name: str) -> Type[Model]:
     model_name = model_name.lower()
     if model_name in ['neuralbow', 'neuralbowmodel']:
         return NeuralBoWModel
-    elif model_name in ['rnn', 'rnnmodel']:
-        return RNNModel
-    elif model_name in {'selfatt', 'selfattention', 'selfattentionmodel'}:
-        return SelfAttentionModel
-    elif model_name in {'1dcnn', 'convolutionalmodel'}:
-        return ConvolutionalModel
-    elif model_name in {'convselfatt', 'convselfattentionmodel'}:
-        return ConvSelfAttentionModel
+    # elif model_name in ['rnn', 'rnnmodel']:
+    #     return RNNModel
+    # elif model_name in {'selfatt', 'selfattention', 'selfattentionmodel'}:
+    #     return SelfAttentionModel
+    # elif model_name in {'1dcnn', 'convolutionalmodel'}:
+    #     return ConvolutionalModel
+    # elif model_name in {'convselfatt', 'convselfattentionmodel'}:
+    #     return ConvSelfAttentionModel
     else:
         raise Exception("Unknown model '%s'!" % model_name)
 
