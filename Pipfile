@@ -18,6 +18,7 @@ toolz = "*"
 SetSimilaritySearch = "*"
 Pygments = "*"
 tensorflow-gpu = "==2.0.0"
+annoy = "*"
 
 [requires]
 python_version = "3.6"

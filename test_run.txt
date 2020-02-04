@@ -1,3 +1,171 @@
+(CodeSearchNet)  larumuga@daedalus  ~/Desktop/Repositories/CodeSearchNet/src   YANCS  python train.py --model neuralbow --testrun                                        
+wandb: Dry run mode, not syncing to the cloud.
+wandb: Tracking run with wandb version 0.8.21
+wandb: W&B is disabled in this directory.  Run `wandb on` to enable cloud syncing.
+wandb: Wandb version 0.8.22 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Run data is saved locally in wandb/dryrun-20200128_221927-tkuaf246
+
+2020-01-28 17:19:27.930846: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 3510585000 Hz
+2020-01-28 17:19:27.931563: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x5b55d60 executing computations on platform Host. Devices:
+2020-01-28 17:19:27.931591: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): Host, Default Version
+2020-01-28 17:19:27.934766: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcuda.so.1
+2020-01-28 17:19:28.058817: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:19:28.059374: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x5e92210 executing computations on platform CUDA. Devices:
+2020-01-28 17:19:28.059389: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): GeForce GTX 1070, Compute Capability 6.1
+2020-01-28 17:19:28.059659: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:19:28.060079: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 0 with properties: 
+name: GeForce GTX 1070 major: 6 minor: 1 memoryClockRate(GHz): 1.7465
+pciBusID: 0000:01:00.0
+2020-01-28 17:19:28.060336: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-01-28 17:19:28.061849: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+2020-01-28 17:19:28.063045: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcufft.so.10.0
+2020-01-28 17:19:28.063400: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcurand.so.10.0
+2020-01-28 17:19:28.065210: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusolver.so.10.0
+2020-01-28 17:19:28.066602: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusparse.so.10.0
+2020-01-28 17:19:28.071165: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudnn.so.7
+2020-01-28 17:19:28.071362: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:19:28.072008: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:19:28.072500: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1746] Adding visible gpu devices: 0
+2020-01-28 17:19:28.072565: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-01-28 17:19:28.073684: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1159] Device interconnect StreamExecutor with strength 1 edge matrix:
+2020-01-28 17:19:28.073702: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1165]      0 
+2020-01-28 17:19:28.073713: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 0:   N 
+2020-01-28 17:19:28.073967: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:19:28.074367: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:19:28.074779: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 6665 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1070, pci bus id: 0000:01:00.0, compute capability: 6.1)
+Tokenizing and building vocabulary for code snippets and queries.  This step may take several hours.
+WARNING:tensorflow:From /home/larumuga/.local/share/virtualenvs/CodeSearchNet-4OYqtNjT/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+WARNING:tensorflow:From /home/larumuga/Desktop/Repositories/CodeSearchNet/src/utils/tfutils.py:144: dense (from tensorflow.python.layers.core) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.Dense instead.
+WARNING:tensorflow:From /home/larumuga/.local/share/virtualenvs/CodeSearchNet-4OYqtNjT/lib/python3.6/site-packages/tensorflow_core/python/layers/core.py:187: Layer.apply (from tensorflow.python.keras.engine.base_layer) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `layer.__call__` method instead.
+Starting training run neuralbow-2020-01-28-17-19-27 of model NeuralBoWModel with following hypers:
+{'code_token_vocab_size': 10000, 'code_token_vocab_count_threshold': 10, 'code_token_embedding_size': 128, 'code_use_subtokens': False, 'code_mark_subtoken_end': False, 'code_max_num_tokens': 200, 'code_use_bpe': True, 'code_pct_bpe': 0.5, 'code_nbow_pool_mode': 'weighted_mean', 'query_token_vocab_size': 10000, 'query_token_vocab_count_threshold': 10, 'query_token_embedding_size': 128, 'query_use_subtokens': False, 'query_mark_subtoken_end': False, 'query_max_num_tokens': 30, 'query_use_bpe': True, 'query_pct_bpe': 0.5, 'query_nbow_pool_mode': 'weighted_mean', 'batch_size': 1000, 'optimizer': 'Adam', 'seed': 0, 'dropout_keep_rate': 0.9, 'learning_rate': 0.01, 'learning_rate_code_scale_factor': 1.0, 'learning_rate_query_scale_factor': 1.0, 'learning_rate_decay': 0.98, 'momentum': 0.85, 'gradient_clip': 1, 'loss': 'cosine', 'margin': 1, 'max_epochs': 2, 'patience': 5, 'fraction_using_func_name': 0.1, 'min_len_func_name_for_query': 12, 'query_random_token_frequency': 0.0}
+Loading training and validation data.
+Begin Training.
+Training on 30000 java samples.
+Validating on 15328 java samples.
+==== Epoch 0 ====
+2020-01-28 17:20:40.285847: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+  Epoch 0 (train) took 2.93s [processed 10233 samples/second]
+ Training Loss: 1.034762
+  Epoch 0 (valid) took 1.04s [processed 14390 samples/second]
+ Validation:  Loss: 1.009297 | MRR: 0.049682
+  Best result so far -- saved model as '/home/larumuga/Desktop/Repositories/CodeSearchNet/resources/saved_models/neuralbow-2020-01-28-17-19-27_model_best.pkl.gz'.
+==== Epoch 1 ====
+  Epoch 1 (train) took 2.61s [processed 11480 samples/second]
+ Training Loss: 1.003288
+  Epoch 1 (valid) took 1.01s [processed 14839 samples/second]
+ Validation:  Loss: 1.006843 | MRR: 0.094976
+  Best result so far -- saved model as '/home/larumuga/Desktop/Repositories/CodeSearchNet/resources/saved_models/neuralbow-2020-01-28-17-19-27_model_best.pkl.gz'.
+2020-01-28 17:20:51.149013: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:20:51.149545: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 0 with properties: 
+name: GeForce GTX 1070 major: 6 minor: 1 memoryClockRate(GHz): 1.7465
+pciBusID: 0000:01:00.0
+2020-01-28 17:20:51.149650: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-01-28 17:20:51.149709: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+2020-01-28 17:20:51.149761: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcufft.so.10.0
+2020-01-28 17:20:51.149804: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcurand.so.10.0
+2020-01-28 17:20:51.149847: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusolver.so.10.0
+2020-01-28 17:20:51.149883: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusparse.so.10.0
+2020-01-28 17:20:51.149921: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudnn.so.7
+2020-01-28 17:20:51.150025: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:20:51.150455: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:20:51.150840: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1746] Adding visible gpu devices: 0
+2020-01-28 17:20:51.150879: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1159] Device interconnect StreamExecutor with strength 1 edge matrix:
+2020-01-28 17:20:51.150892: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1165]      0 
+2020-01-28 17:20:51.150904: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 0:   N 
+2020-01-28 17:20:51.151100: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:20:51.151516: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-28 17:20:51.151890: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 6665 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1070, pci bus id: 0000:01:00.0, compute capability: 6.1)
+Test-All MRR (bs=1,000):  0.016
+FuncNameTest-All MRR (bs=1,000):  0.012
+Validation-All MRR (bs=1,000):  0.020
+Test-java MRR (bs=1,000):  0.016
+FuncNameTest-java MRR (bs=1,000):  0.012
+Validation-java MRR (bs=1,000):  0.020
+
+wandb: Waiting for W&B process to finish, PID 3344
+wandb: Program ended successfully.
+wandb: You can sync this run to the cloud by running: 
+wandb: wandb sync wandb/dryrun-20200128_221927-tkuaf246
+
+
+
+
+---------
+
+ python predict.py -m ../resources/saved_models/neuralbow-2020-01-28-17-19-27_model_best.pkl.gz 
+Restoring model from ../resources/saved_models/neuralbow-2020-01-28-17-19-27_model_best.pkl.gz
+2020-01-29 13:40:17.030839: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 3510585000 Hz
+2020-01-29 13:40:17.031964: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x5973bf0 executing computations on platform Host. Devices:
+2020-01-29 13:40:17.031999: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): Host, Default Version
+2020-01-29 13:40:17.035595: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcuda.so.1
+2020-01-29 13:40:17.163857: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-29 13:40:17.164382: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x5a096b0 executing computations on platform CUDA. Devices:
+2020-01-29 13:40:17.164408: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): GeForce GTX 1070, Compute Capability 6.1
+2020-01-29 13:40:17.164677: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-29 13:40:17.165176: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1618] Found device 0 with properties: 
+name: GeForce GTX 1070 major: 6 minor: 1 memoryClockRate(GHz): 1.7465
+pciBusID: 0000:01:00.0
+2020-01-29 13:40:17.166938: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-01-29 13:40:17.194756: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+2020-01-29 13:40:17.208606: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcufft.so.10.0
+2020-01-29 13:40:17.213269: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcurand.so.10.0
+2020-01-29 13:40:17.247158: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusolver.so.10.0
+2020-01-29 13:40:17.267356: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcusparse.so.10.0
+2020-01-29 13:40:17.334259: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudnn.so.7
+2020-01-29 13:40:17.334442: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-29 13:40:17.334939: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-29 13:40:17.335321: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1746] Adding visible gpu devices: 0
+2020-01-29 13:40:17.335843: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcudart.so.10.0
+2020-01-29 13:40:17.337314: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1159] Device interconnect StreamExecutor with strength 1 edge matrix:
+2020-01-29 13:40:17.337328: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1165]      0 
+2020-01-29 13:40:17.337335: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1178] 0:   N 
+2020-01-29 13:40:17.337932: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-29 13:40:17.338330: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:1006] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2020-01-29 13:40:17.338722: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1304] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 6597 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1070, pci bus id: 0000:01:00.0, compute capability: 6.1)
+WARNING:tensorflow:From /home/larumuga/.local/share/virtualenvs/CodeSearchNet-4OYqtNjT/lib/python3.6/site-packages/tensorflow_core/python/ops/resource_variable_ops.py:1630: calling BaseResourceVariable.__init__ (from tensorflow.python.ops.resource_variable_ops) with constraint is deprecated and will be removed in a future version.
+Instructions for updating:
+If using Keras pass *_constraint arguments to layers.
+WARNING:tensorflow:From /home/larumuga/Desktop/Repositories/CodeSearchNet/src/utils/tfutils.py:144: dense (from tensorflow.python.layers.core) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.Dense instead.
+WARNING:tensorflow:From /home/larumuga/.local/share/virtualenvs/CodeSearchNet-4OYqtNjT/lib/python3.6/site-packages/tensorflow_core/python/layers/core.py:187: Layer.apply (from tensorflow.python.keras.engine.base_layer) is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `layer.__call__` method instead.
+Evaluating language: java
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1569889/1569889 [00:10<00:00, 151921.87it/s]
+2020-01-29 13:50:54.594246: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcublas.so.10.0
+1569889it [00:22, 68714.89it/s]
+
+
+
+
+----------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ==== Epoch 9 ====
   Epoch 9 (train) took 815.67s [processed 505 samples/second]
  Training Loss: 0.146924
