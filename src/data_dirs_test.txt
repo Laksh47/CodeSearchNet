@@ -1,1 +1,1 @@
-../resources/data/java/final/jsonl/test
+/home/larumuga/Desktop/sample_code2vec/test

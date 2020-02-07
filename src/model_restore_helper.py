@@ -3,13 +3,15 @@ from typing import Dict, Any, Optional, Type
 import tensorflow as tf
 from dpu_utils.utils import RichPath
 
-from models import Model, NeuralBoWModel
+from models import Model, NeuralBoWModel, Code2VecModel
 
 
 def get_model_class_from_name(model_name: str) -> Type[Model]:
     model_name = model_name.lower()
     if model_name in ['neuralbow', 'neuralbowmodel']:
         return NeuralBoWModel
+    elif model_name in ['code2vec', 'code2vecmodel']:
+        return Code2VecModel
     # elif model_name in ['rnn', 'rnnmodel']:
     #     return RNNModel
     # elif model_name in {'selfatt', 'selfattention', 'selfattentionmodel'}:
