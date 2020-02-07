@@ -401,7 +401,16 @@ class Code2VecModelBase(ABC):
 
             for raw_sample in file_path.read_by_file_suffix():
                 sample_language = raw_sample['language']
+
+                # For path_contexts vocabulary
+                code_tokens_from_path, path_tokens = \
+                    self.__code_encoder_type.get_path_tokens(raw_sample['path_contexts'], self.hyperparameters['max_paths'])
+                raw_sample['code_tokens'].extend(code_tokens_from_path)
+                raw_sample['code_tokens'] = list(set(raw_sample['code_tokens']))
+                # raw_sample['path_tokens'] = path_tokens
+
                 self.__code_encoder_type.load_metadata_from_sample(raw_sample['code_tokens'],
+                                                                   path_tokens,
                                                                    per_code_language_metadata[sample_language],
                                                                    self.hyperparameters['code_use_subtokens'],
                                                                    self.hyperparameters['code_mark_subtoken_end'])

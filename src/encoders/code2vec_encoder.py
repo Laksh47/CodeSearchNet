@@ -11,6 +11,8 @@ import tensorflow as tf
 from dpu_utils.codeutils import split_identifier_into_parts
 from dpu_utils.mlutils import Vocabulary
 
+from utils.general_utils import java_string_hashcode
+
 from .code2vec_encoder_base import Code2VecEncoderBase, QueryType
 
 IDENTIFIER_TOKEN_REGEX = re.compile('[_a-zA-Z][_a-zA-Z0-9]*')
@@ -23,6 +25,10 @@ class Code2VecEncoder(Code2VecEncoderBase):
             'token_vocab_size': 10000,
             'token_vocab_count_threshold': 10,
             'token_embedding_size': 128,
+
+            'path_vocab_size': 10000,
+            'path_vocab_count_threshold': 1,
+            'path_embedding_size': 128,
 
             'use_subtokens': False,
             'mark_subtoken_end': False,
@@ -73,7 +79,7 @@ class Code2VecEncoder(Code2VecEncoderBase):
         return self.get_hyper('token_embedding_size')
 
     def make_model(self, is_train: bool=False) -> tf.Tensor:
-        with tf.compat.v1.variable_scope("nbow_encoder"):
+        with tf.compat.v1.variable_scope("code2vec_encoder"):
             self._make_placeholders()
 
             seq_tokens_embeddings = self.embedding_layer(self.placeholders['tokens'])
@@ -112,6 +118,7 @@ class Code2VecEncoder(Code2VecEncoderBase):
     def init_metadata(cls) -> Dict[str, Any]:
         raw_metadata = super().init_metadata()
         raw_metadata['token_counter'] = Counter()
+        raw_metadata['path_counter'] = Counter()
         return raw_metadata
 
     @classmethod
@@ -125,18 +132,45 @@ class Code2VecEncoder(Code2VecEncoderBase):
                 yield token
 
     @classmethod
-    def load_metadata_from_sample(cls, data_to_load: Iterable[str], raw_metadata: Dict[str, Any],
+    def get_path_tokens(cls, path_contexts, max_paths):
+        code_tokens = set()
+        path_tokens = set()
+
+        parts = path_contexts.split(" ")
+        # method_name = parts[0]
+        contexts = parts[1:]
+
+        for context in contexts:
+            # context = context.replace('METHOD_NAME', method_name)
+            context_parts = context.split(",")
+            source_token = context_parts[0]
+            target_token = context_parts[2]
+            path = context_parts[1]
+
+            hashed_path = java_string_hashcode(path)
+            code_tokens.add(source_token)
+            code_tokens.add(target_token)
+            path_tokens.add(hashed_path)
+
+        return (list(code_tokens), list(path_tokens)[:max_paths])
+
+    @classmethod
+    def load_metadata_from_sample(cls, tokens_to_load: Iterable[str], path_to_load: Iterable[str], raw_metadata: Dict[str, Any],
                                   use_subtokens: bool=False, mark_subtoken_end: bool=False) -> None:
         if use_subtokens:
-            data_to_load = cls._to_subtoken_stream(data_to_load, mark_subtoken_end=mark_subtoken_end)
-        raw_metadata['token_counter'].update(data_to_load)
+            tokens_to_load = cls._to_subtoken_stream(tokens_to_load, mark_subtoken_end=mark_subtoken_end)
+        raw_metadata['token_counter'].update(tokens_to_load)
+        raw_metadata['path_counter'].update(path_to_load)
 
     @classmethod
     def finalise_metadata(cls, encoder_label: str, hyperparameters: Dict[str, Any], raw_metadata_list: List[Dict[str, Any]]) -> Dict[str, Any]:
         final_metadata = super().finalise_metadata(encoder_label, hyperparameters, raw_metadata_list)
         merged_token_counter = Counter()
+        merged_path_counter = Counter()
+
         for raw_metadata in raw_metadata_list:
             merged_token_counter += raw_metadata['token_counter']
+            merged_path_counter += raw_metadata['path_counter']
 
         if hyperparameters['%s_use_bpe' % encoder_label]:
             token_vocabulary = BpeVocabulary(vocab_size=hyperparameters['%s_token_vocab_size' % encoder_label],
@@ -147,6 +181,11 @@ class Code2VecEncoder(Code2VecEncoderBase):
             token_vocabulary = Vocabulary.create_vocabulary(tokens=merged_token_counter,
                                                             max_size=hyperparameters['%s_token_vocab_size' % encoder_label],
                                                             count_threshold=hyperparameters['%s_token_vocab_count_threshold' % encoder_label])
+
+        final_metadata['path_vocab'] = Vocabulary.create_vocabulary(tokens=merged_path_counter,
+                                                            max_size=hyperparameters['%s_path_vocab_size' % encoder_label],
+                                                            count_threshold=hyperparameters['%s_path_vocab_count_threshold' % encoder_label])
+        final_metadata['common_paths'] = merged_path_counter.most_common(50)
 
         final_metadata['token_vocab'] = token_vocabulary
         # Save the most common tokens for use in data augmentation:
