@@ -2,11 +2,11 @@ from typing import Dict, Any
 
 import tensorflow as tf
 
-from .masked_seq_encoder import MaskedSeqEncoder
-from utils.tfutils import pool_sequence_embedding
+from .seq_encoder import SeqEncoder
+from utils.tfutils import write_to_feed_dict, pool_sequence_embedding
 
 
-class Code2VecEncoder(MaskedSeqEncoder):
+class Code2VecEncoder(SeqEncoder):
     @classmethod
     def get_default_hyperparameters(cls) -> Dict[str, Any]:
         encoder_hypers = { 'nbow_pool_mode': 'weighted_mean',
@@ -17,6 +17,26 @@ class Code2VecEncoder(MaskedSeqEncoder):
 
     def __init__(self, label: str, hyperparameters: Dict[str, Any], metadata: Dict[str, Any]):
         super().__init__(label, hyperparameters, metadata)
+
+    def _make_placeholders(self):
+        """
+        Creates placeholders "tokens" and "tokens_mask" for masked sequence encoders.
+        """
+        super()._make_placeholders()
+        self.placeholders['tokens_mask'] = \
+            tf.compat.v1.placeholder(tf.float32,
+                           shape=[None, self.get_hyper('max_num_tokens')],
+                           name='tokens_mask')
+
+    def init_minibatch(self, batch_data: Dict[str, Any]) -> None:
+        super().init_minibatch(batch_data)
+        batch_data['tokens'] = []
+        batch_data['tokens_mask'] = []
+
+    def minibatch_to_feed_dict(self, batch_data: Dict[str, Any], feed_dict: Dict[tf.Tensor, Any], is_train: bool) -> None:
+        super().minibatch_to_feed_dict(batch_data, feed_dict, is_train)
+        write_to_feed_dict(feed_dict, self.placeholders['tokens'], batch_data['tokens'])
+        write_to_feed_dict(feed_dict, self.placeholders['tokens_mask'], batch_data['tokens_mask'])
 
     @property
     def output_representation_size(self):
