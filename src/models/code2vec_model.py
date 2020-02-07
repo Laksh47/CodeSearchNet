@@ -1,10 +1,10 @@
 from typing import Any, Dict, Optional
 
 from encoders import NBoWEncoder, Code2VecEncoder
-from .model import Model
+from .code2vec_model_base import Code2VecModelBase
 
 
-class Code2VecModel(Model):
+class Code2VecModel(Code2VecModelBase):
     @classmethod
     def get_default_hyperparameters(cls) -> Dict[str, Any]:
         hypers = {}

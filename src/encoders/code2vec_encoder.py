@@ -11,11 +11,11 @@ import tensorflow as tf
 from dpu_utils.codeutils import split_identifier_into_parts
 from dpu_utils.mlutils import Vocabulary
 
-from .encoder import Encoder, QueryType
+from .code2vec_encoder_base import Code2VecEncoderBase, QueryType
 
 IDENTIFIER_TOKEN_REGEX = re.compile('[_a-zA-Z][_a-zA-Z0-9]*')
 
-class Code2VecEncoder(Encoder):
+class Code2VecEncoder(Code2VecEncoderBase):
     @classmethod
     def get_default_hyperparameters(cls) -> Dict[str, Any]:
         encoder_hypers = {
