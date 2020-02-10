@@ -262,11 +262,6 @@ class Code2VecEncoder(Code2VecEncoderBase):
                               function_name: Optional[str],
                               result_holder: Dict[str, Any],
                               is_test: bool = True) -> bool:
-        """
-        Saves two versions of both the code and the query: one using the docstring as the query and the other using the
-        function-name as the query, and replacing the function name in the code with an out-of-vocab token.
-        Sub-tokenizes, converts, and pads both versions, and rejects empty samples.
-        """
 
         data_to_load = cls.get_path_tokens(path_contexts, hyperparameters[f'{encoder_label}_max_num_paths'])
 
