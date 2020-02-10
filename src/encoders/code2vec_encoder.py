@@ -5,7 +5,8 @@ import random
 import re
 
 from utils.bpevocabulary import BpeVocabulary
-from utils.tfutils import convert_and_pad_token_sequence, write_to_feed_dict, pool_sequence_embedding
+from utils.tfutils import convert_and_pad_path_contexts
+from utils.tfutils import write_to_feed_dict
 
 import tensorflow as tf
 from dpu_utils.codeutils import split_identifier_into_parts
@@ -34,6 +35,11 @@ class Code2VecEncoder(Code2VecEncoderBase):
             'mark_subtoken_end': False,
 
             'max_num_tokens': 200,
+            'max_num_paths': 200,
+            'max_num_contexts': 200,
+
+            'code_vector_size': 128,
+            'context_vector_size': 128,
 
             'use_bpe': True,
             'pct_bpe': 0.5
@@ -54,65 +60,119 @@ class Code2VecEncoder(Code2VecEncoderBase):
         Creates placeholders "tokens" and "tokens_mask" for masked sequence encoders.
         """
         super()._make_placeholders()
-        self.placeholders['tokens'] = \
+
+        self.placeholders['source_token'] = \
             tf.compat.v1.placeholder(tf.int32,
                            shape=[None, self.get_hyper('max_num_tokens')],
-                           name='tokens')
+                           name='source_token')
 
-        self.placeholders['tokens_mask'] = \
-            tf.compat.v1.placeholder(tf.float32,
+        self.placeholders['target_token'] = \
+            tf.compat.v1.placeholder(tf.int32,
                            shape=[None, self.get_hyper('max_num_tokens')],
-                           name='tokens_mask')
+                           name='target_token')
+
+        self.placeholders['path'] = \
+            tf.compat.v1.placeholder(tf.int32,
+                           shape=[None, self.get_hyper('max_num_paths')],
+                           name='path')
 
     def init_minibatch(self, batch_data: Dict[str, Any]) -> None:
         super().init_minibatch(batch_data)
-        batch_data['tokens'] = []
-        batch_data['tokens_mask'] = []
+        batch_data['source_tokens'] = []
+        batch_data['target_tokens'] = []
+        batch_data['paths'] = []
 
     def minibatch_to_feed_dict(self, batch_data: Dict[str, Any], feed_dict: Dict[tf.Tensor, Any], is_train: bool) -> None:
         super().minibatch_to_feed_dict(batch_data, feed_dict, is_train)
-        write_to_feed_dict(feed_dict, self.placeholders['tokens'], batch_data['tokens'])
-        write_to_feed_dict(feed_dict, self.placeholders['tokens_mask'], batch_data['tokens_mask'])
+        write_to_feed_dict(feed_dict, self.placeholders['source_token'], batch_data['source_tokens'])
+        write_to_feed_dict(feed_dict, self.placeholders['path'], batch_data['paths'])
+        write_to_feed_dict(feed_dict, self.placeholders['target_token'], batch_data['target_tokens'])
 
     @property
     def output_representation_size(self):
         return self.get_hyper('token_embedding_size')
 
-    def make_model(self, is_train: bool=False) -> tf.Tensor:
+    def make_code2vec_model(self, is_train: bool=False) -> tf.Tensor:
         with tf.compat.v1.variable_scope("code2vec_encoder"):
             self._make_placeholders()
 
-            seq_tokens_embeddings = self.embedding_layer(self.placeholders['tokens'])
-            seq_token_mask = self.placeholders['tokens_mask']
-            seq_token_lengths = tf.reduce_sum(input_tensor=seq_token_mask, axis=1)  # B
-            return pool_sequence_embedding(self.get_hyper('nbow_pool_mode').lower(),
-                                           sequence_token_embeddings=seq_tokens_embeddings,
-                                           sequence_lengths=seq_token_lengths,
-                                           sequence_token_masks=seq_token_mask)
-
-
-    def embedding_layer(self, token_inp: tf.Tensor) -> tf.Tensor:
-        """
-        Creates embedding layer that is in common between many encoders.
-
-        Args:
-            token_inp:  2D tensor that is of shape (batch size, sequence length)
-
-        Returns:
-            3D tensor of shape (batch size, sequence length, embedding dimension)
-        """
-
-        token_embeddings = tf.compat.v1.get_variable(name='token_embeddings',
+            token_embeddings = tf.compat.v1.get_variable(name='token_embeddings',
                                            initializer=tf.compat.v1.glorot_uniform_initializer(),
                                            shape=[len(self.metadata['token_vocab']),
                                                   self.get_hyper('token_embedding_size')],
                                            )
-        self.__embeddings = token_embeddings
+            path_embeddings = tf.compat.v1.get_variable(name='path_embeddings',
+                                           initializer=tf.compat.v1.glorot_uniform_initializer(),
+                                           shape=[len(self.metadata['path_vocab']),
+                                                  self.get_hyper('path_embedding_size')],
+                                           )
+            attention_param = tf.compat.v1.get_variable(
+                'ATTENTION',
+                shape=(self.get_hyper('code_vector_size'), 1), dtype=tf.float32)
 
-        token_embeddings = tf.nn.dropout(token_embeddings,
-                                         rate=1 - (self.placeholders['dropout_keep_rate']))
+            self.__token_embeddings = token_embeddings
+            self.__path_embeddings = path_embeddings
 
-        return tf.nn.embedding_lookup(params=token_embeddings, ids=token_inp)
+            source_word_embed = tf.nn.embedding_lookup(params=token_embeddings, ids=self.placeholders['source_token'])  # (batch, max_contexts, dim)
+            path_embed = tf.nn.embedding_lookup(params=path_embeddings, ids=self.placeholders['path'])  # (batch, max_contexts, dim)
+            target_word_embed = tf.nn.embedding_lookup(params=token_embeddings, ids=self.placeholders['target_token'])  # (batch, max_contexts, dim)
+
+            context_embed = tf.concat([source_word_embed, path_embed, target_word_embed],
+                                  axis=-1)  # (batch, max_contexts, dim * 3)
+
+            self.__context_embeddings = context_embed
+
+            context_embed = tf.nn.dropout(context_embed, rate=1 - (self.placeholders['dropout_keep_rate']))
+
+            flat_embed = tf.reshape(context_embed, [-1, self.get_hyper('context_vector_size')])  # (batch * max_contexts, dim * 3)
+            transform_param = tf.compat.v1.get_variable(
+                'TRANSFORM', shape=(self.get_hyper('context_vector_size'), self.get_hyper('code_vector_size')), dtype=tf.float32)
+
+            flat_embed = tf.tanh(tf.matmul(flat_embed, transform_param))  # (batch * max_contexts, dim * 3)
+
+            contexts_weights = tf.matmul(flat_embed, attention_param)  # (batch * max_contexts, 1)
+            batched_contexts_weights = tf.reshape(
+                contexts_weights, [-1, self.get_hyper('max_num_contexts'), 1])  # (batch, max_contexts, 1)
+
+            # mask = tf.math.log(valid_mask)  # (batch, max_contexts)
+            # mask = tf.expand_dims(mask, axis=2)  # (batch, max_contexts, 1)
+            # batched_contexts_weights += mask  # (batch, max_contexts, 1)
+
+            attention_weights = tf.nn.softmax(batched_contexts_weights, axis=1)  # (batch, max_contexts, 1)
+
+            batched_embed = tf.reshape(flat_embed, shape=[-1, self.get_hyper('max_num_contexts'), self.get_hyper('context_vector_size')])
+            code_vectors = tf.reduce_sum(tf.multiply(batched_embed, attention_weights), axis=1)  # (batch, dim * 3)
+
+            return code_vectors
+
+    def make_model(self, is_train: bool=False) -> tf.Tensor:
+        with tf.compat.v1.variable_scope("code2vec_encoder"):
+            self._make_placeholders()
+
+            return self.make_code2vec_model()
+
+    # def embedding_layer(self, token_inp: tf.Tensor) -> tf.Tensor:
+    #     """
+    #     Creates embedding layer that is in common between many encoders.
+
+    #     Args:
+    #         token_inp:  2D tensor that is of shape (batch size, sequence length)
+
+    #     Returns:
+    #         3D tensor of shape (batch size, sequence length, embedding dimension)
+    #     """
+
+    #     token_embeddings = tf.compat.v1.get_variable(name='token_embeddings',
+    #                                        initializer=tf.compat.v1.glorot_uniform_initializer(),
+    #                                        shape=[len(self.metadata['token_vocab']),
+    #                                               self.get_hyper('token_embedding_size')],
+    #                                        )
+    #     self.__embeddings = token_embeddings
+
+    #     token_embeddings = tf.nn.dropout(token_embeddings,
+    #                                      rate=1 - (self.placeholders['dropout_keep_rate']))
+
+    #     return tf.nn.embedding_lookup(params=token_embeddings, ids=token_inp)
 
     @classmethod
     def init_metadata(cls) -> Dict[str, Any]:
@@ -133,14 +193,15 @@ class Code2VecEncoder(Code2VecEncoderBase):
 
     @classmethod
     def get_path_tokens(cls, path_contexts, max_paths):
-        code_tokens = set()
-        path_tokens = set()
+        source_tokens = []
+        paths = []
+        target_tokens = []
 
         parts = path_contexts.split(" ")
         # method_name = parts[0]
         contexts = parts[1:]
 
-        for context in contexts:
+        for context in contexts[:max_paths]:
             # context = context.replace('METHOD_NAME', method_name)
             context_parts = context.split(",")
             source_token = context_parts[0]
@@ -148,11 +209,11 @@ class Code2VecEncoder(Code2VecEncoderBase):
             path = context_parts[1]
 
             hashed_path = java_string_hashcode(path)
-            code_tokens.add(source_token)
-            code_tokens.add(target_token)
-            path_tokens.add(hashed_path)
+            source_tokens.append(source_token)
+            target_tokens.append(target_token)
+            paths.append(hashed_path)
 
-        return (list(code_tokens), list(path_tokens)[:max_paths])
+        return (source_tokens, paths, target_tokens)
 
     @classmethod
     def load_metadata_from_sample(cls, tokens_to_load: Iterable[str], path_to_load: Iterable[str], raw_metadata: Dict[str, Any],
@@ -197,7 +258,7 @@ class Code2VecEncoder(Code2VecEncoderBase):
                               encoder_label: str,
                               hyperparameters: Dict[str, Any],
                               metadata: Dict[str, Any],
-                              data_to_load: Any,
+                              path_contexts: Any,
                               function_name: Optional[str],
                               result_holder: Dict[str, Any],
                               is_test: bool = True) -> bool:
@@ -206,43 +267,16 @@ class Code2VecEncoder(Code2VecEncoderBase):
         function-name as the query, and replacing the function name in the code with an out-of-vocab token.
         Sub-tokenizes, converts, and pads both versions, and rejects empty samples.
         """
-        # Save the two versions of the code and query:
-        data_holder = {QueryType.DOCSTRING.value: data_to_load, QueryType.FUNCTION_NAME.value: None}
-        # Skip samples where the function name is very short, because it probably has too little information
-        # to be a good search query.
-        if not is_test and hyperparameters['fraction_using_func_name'] > 0. and function_name and \
-                len(function_name) >= hyperparameters['min_len_func_name_for_query']:
-            if encoder_label == 'query':
-                # Set the query tokens to the function name, broken up into its sub-tokens:
-                data_holder[QueryType.FUNCTION_NAME.value] = split_identifier_into_parts(function_name)
-            elif encoder_label == 'code':
-                # In the code, replace the function name with the out-of-vocab token everywhere it appears:
-                data_holder[QueryType.FUNCTION_NAME.value] = [Vocabulary.get_unk() if token == function_name else token
-                                                              for token in data_to_load]
 
-        # Sub-tokenize, convert, and pad both versions:
-        for key, data in data_holder.items():
-            if not data:
-                result_holder[f'{encoder_label}_tokens_{key}'] = None
-                result_holder[f'{encoder_label}_tokens_mask_{key}'] = None
-                result_holder[f'{encoder_label}_tokens_length_{key}'] = None
-                continue
-            if hyperparameters[f'{encoder_label}_use_subtokens']:
-                data = cls._to_subtoken_stream(data,
-                                               mark_subtoken_end=hyperparameters[
-                                                   f'{encoder_label}_mark_subtoken_end'])
-            tokens, tokens_mask = \
-                convert_and_pad_token_sequence(metadata['token_vocab'], list(data),
-                                               hyperparameters[f'{encoder_label}_max_num_tokens'])
-            # Note that we share the result_holder with different encoders, and so we need to make our identifiers
-            # unique-ish
-            result_holder[f'{encoder_label}_tokens_{key}'] = tokens
-            result_holder[f'{encoder_label}_tokens_mask_{key}'] = tokens_mask
-            result_holder[f'{encoder_label}_tokens_length_{key}'] = int(np.sum(tokens_mask))
+        data_to_load = cls.get_path_tokens(path_contexts, hyperparameters[f'{encoder_label}_max_num_paths'])
 
-        if result_holder[f'{encoder_label}_tokens_mask_{QueryType.DOCSTRING.value}'] is None or \
-                int(np.sum(result_holder[f'{encoder_label}_tokens_mask_{QueryType.DOCSTRING.value}'])) == 0:
-            return False
+        source_tokens, paths, target_tokens = \
+                convert_and_pad_path_contexts(metadata['token_vocab'], metadata['path_vocab'], data_to_load,
+                                               hyperparameters[f'{encoder_label}_max_num_paths'])
+
+        result_holder['source_tokens'] = source_tokens
+        result_holder['paths'] = paths
+        result_holder['target_tokens'] = target_tokens
 
         return True
 
@@ -253,39 +287,9 @@ class Code2VecEncoder(Code2VecEncoderBase):
         """
         current_sample = dict()
 
-        # Train with some fraction of samples having their query set to the function name instead of the docstring, and
-        # their function name replaced with out-of-vocab in the code:
-        current_sample['tokens'] = sample[f'{self.label}_tokens_{query_type}']
-        current_sample['tokens_mask'] = sample[f'{self.label}_tokens_mask_{query_type}']
-        current_sample['tokens_lengths'] = sample[f'{self.label}_tokens_length_{query_type}']
-
-        # In the query, randomly add high-frequency tokens:
-        # TODO: Add tokens with frequency proportional to their frequency in the vocabulary
-        if is_train and self.label == 'query' and self.hyperparameters['query_random_token_frequency'] > 0.:
-            total_length = len(current_sample['tokens'])
-            length_without_padding = current_sample['tokens_lengths']
-            # Generate a list of places in which to insert tokens:
-            insert_indices = np.array([random.uniform(0., 1.) for _ in range(length_without_padding)])  # don't allow insertions in the padding
-            insert_indices = insert_indices < self.hyperparameters['query_random_token_frequency']  # insert at the correct frequency
-            insert_indices = np.flatnonzero(insert_indices)
-            if len(insert_indices) > 0:
-                # Generate the random tokens to add:
-                tokens_to_add = [random.randrange(0, len(self.metadata['common_tokens']))
-                                 for _ in range(len(insert_indices))]  # select one of the most common tokens for each location
-                tokens_to_add = [self.metadata['common_tokens'][token][0] for token in tokens_to_add]  # get the word corresponding to the token we're adding
-                tokens_to_add = [self.metadata['token_vocab'].get_id_or_unk(token) for token in tokens_to_add]  # get the index within the vocab of the token we're adding
-                # Efficiently insert the added tokens, leaving the total length the same:
-                to_insert = 0
-                output_query = np.zeros(total_length, dtype=int)
-                for idx in range(min(length_without_padding, total_length - len(insert_indices))):  # iterate only through the beginning of the array where changes are being made
-                    if to_insert < len(insert_indices) and idx == insert_indices[to_insert]:
-                        output_query[idx + to_insert] = tokens_to_add[to_insert]
-                        to_insert += 1
-                    output_query[idx + to_insert] = current_sample['tokens'][idx]
-                current_sample['tokens'] = output_query
-                # Add the needed number of non-padding values to the mask:
-                current_sample['tokens_mask'][length_without_padding:length_without_padding + len(tokens_to_add)] = 1.
-                current_sample['tokens_lengths'] += len(tokens_to_add)
+        current_sample['source_tokens'] = sample['source_tokens']
+        current_sample['paths'] = sample['paths']
+        current_sample['target_tokens'] = sample['target_tokens']
 
         # Add the current sample to the minibatch:
         [batch_data[key].append(current_sample[key]) for key in current_sample.keys() if key in batch_data.keys()]
@@ -293,5 +297,9 @@ class Code2VecEncoder(Code2VecEncoderBase):
         return False
 
     def get_token_embeddings(self) -> Tuple[tf.Tensor, List[str]]:
-        return (self.__embeddings,
+        return (self.__token_embeddings,
+                list(self.metadata['token_vocab'].id_to_token))
+
+    def get_path_embeddings(self) -> Tuple[tf.Tensor, List[str]]:
+        return (self.__path_embeddings,
                 list(self.metadata['token_vocab'].id_to_token))

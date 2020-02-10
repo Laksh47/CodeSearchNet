@@ -59,7 +59,7 @@ def parse_data_file(hyperparameters: Dict[str, Any],
         use_code_flag = code_encoder_class.load_data_from_sample("code",
                                                                  hyperparameters,
                                                                  per_code_language_metadata[language],
-                                                                 raw_sample['code_tokens'],
+                                                                 raw_sample['path_contexts'],
                                                                  function_name,
                                                                  sample,
                                                                  is_test)
@@ -403,14 +403,18 @@ class Code2VecModelBase(ABC):
                 sample_language = raw_sample['language']
 
                 # For path_contexts vocabulary
-                code_tokens_from_path, path_tokens = \
-                    self.__code_encoder_type.get_path_tokens(raw_sample['path_contexts'], self.hyperparameters['max_paths'])
-                raw_sample['code_tokens'].extend(code_tokens_from_path)
+                source_tokens, paths, target_tokens = \
+                    self.__code_encoder_type.get_path_tokens(raw_sample['path_contexts'], self.hyperparameters['code_max_num_paths'])
+                raw_sample['code_tokens'].extend(source_tokens)
+                raw_sample['code_tokens'].extend(target_tokens)
                 raw_sample['code_tokens'] = list(set(raw_sample['code_tokens']))
-                # raw_sample['path_tokens'] = path_tokens
+
+                # raw_sample['source_tokens'] = source_tokens
+                # raw_sample['paths'] = paths
+                # raw_sample['target_tokens'] = target_tokens
 
                 self.__code_encoder_type.load_metadata_from_sample(raw_sample['code_tokens'],
-                                                                   path_tokens,
+                                                                   paths,
                                                                    per_code_language_metadata[sample_language],
                                                                    self.hyperparameters['code_use_subtokens'],
                                                                    self.hyperparameters['code_mark_subtoken_end'])
@@ -928,18 +932,18 @@ class Code2VecModelBase(ABC):
 
     def get_code_representations(self, code_data: List[Dict[str, Any]]) -> List[Optional[np.ndarray]]:
         def code_data_loader(sample_to_parse, result_holder):
-            code_tokens = sample_to_parse['code_tokens']
+            path_contexts = sample_to_parse['path_contexts']
             language = sample_to_parse['language']
             if language.startswith('python'):
                 language = 'python'
 
-            if code_tokens is not None:
+            if path_contexts is not None:
                 function_name = sample_to_parse.get('func_name')
                 return self.__code_encoder_type.load_data_from_sample(
                     "code",
                     self.hyperparameters,
                     self.__per_code_language_metadata[language],
-                    code_tokens,
+                    path_contexts,
                     function_name,
                     result_holder=result_holder,
                     is_test=True)

@@ -11,8 +11,6 @@ class Code2VecModel(Code2VecModelBase):
         hypers.update({f'code_{key}': value for key, value in Code2VecEncoder.get_default_hyperparameters().items()})
         hypers.update({f'query_{key}': value for key, value in NBoWEncoder.get_default_hyperparameters().items()})
         model_hypers = {
-            'max_paths': 200,
-
             'code_use_subtokens': False,
             'code_mark_subtoken_end': False,
             'loss': 'cosine',

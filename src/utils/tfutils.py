@@ -10,6 +10,22 @@ from utils.bpevocabulary import BpeVocabulary
 
 BIG_NUMBER = 1e7
 
+def convert_and_pad_path_contexts(token_vocab, path_vocab, path_contexts, output_tensor_size):
+    source_token_list, path_list, target_token_list = path_contexts
+
+    # source_token_ids = np.zeros(output_tensor_size, dtype=np.int32)
+    path_ids = np.zeros(output_tensor_size, dtype=np.int32)
+    # target_token_ids = np.zeros(output_tensor_size, dtype=np.int32)
+
+    for i in range(len(path_list)):
+        path_ids[i] = path_vocab.get_id_or_unk(path_list[i])
+        # target_token_ids[i] = token_vocab.get_id_or_unk(target_tokens_list[i])
+
+    source_token_ids = np.array(list(token_vocab.transform(source_token_list, fixed_length=output_tensor_size))[0])
+    target_token_ids = np.array(list(token_vocab.transform(target_token_list, fixed_length=output_tensor_size))[0])
+    # paths_ids = np.array(list(path_vocab.transform(path_list, fixed_length=output_tensor_size))[0])
+
+    return source_token_ids, path_ids, target_token_ids
 
 def convert_and_pad_token_sequence(token_vocab: Union[Vocabulary, BpeVocabulary],
                                    token_sequence: List[str],
