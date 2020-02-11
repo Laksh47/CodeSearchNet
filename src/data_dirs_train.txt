@@ -1,1 +1,1 @@
-/home/larumuga/Desktop/sample_code2vec/train
+/home/larumuga/Desktop/code2vec_features/train

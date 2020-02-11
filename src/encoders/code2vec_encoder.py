@@ -21,15 +21,20 @@ IDENTIFIER_TOKEN_REGEX = re.compile('[_a-zA-Z][_a-zA-Z0-9]*')
 class Code2VecEncoder(Code2VecEncoderBase):
     @classmethod
     def get_default_hyperparameters(cls) -> Dict[str, Any]:
+        EMBEDDINGS_SIZE = 128
+        TOKEN_EMBEDDINGS_SIZE = EMBEDDINGS_SIZE
+        PATH_EMBEDDINGS_SIZE = EMBEDDINGS_SIZE
+        CODE_VECTOR_SIZE = PATH_EMBEDDINGS_SIZE + 2 * TOKEN_EMBEDDINGS_SIZE
+
         encoder_hypers = {
             'nbow_pool_mode': 'weighted_mean',
             'token_vocab_size': 10000,
             'token_vocab_count_threshold': 10,
-            'token_embedding_size': 128,
+            'token_embedding_size': TOKEN_EMBEDDINGS_SIZE,
 
             'path_vocab_size': 10000,
             'path_vocab_count_threshold': 1,
-            'path_embedding_size': 128,
+            'path_embedding_size': PATH_EMBEDDINGS_SIZE,
 
             'use_subtokens': False,
             'mark_subtoken_end': False,
@@ -38,8 +43,8 @@ class Code2VecEncoder(Code2VecEncoderBase):
             'max_num_paths': 200,
             'max_num_contexts': 200,
 
-            'code_vector_size': 128,
-            'context_vector_size': 128,
+            'code_vector_size': CODE_VECTOR_SIZE,
+            'context_vector_size': CODE_VECTOR_SIZE,
 
             'use_bpe': True,
             'pct_bpe': 0.5
@@ -90,7 +95,8 @@ class Code2VecEncoder(Code2VecEncoderBase):
 
     @property
     def output_representation_size(self):
-        return self.get_hyper('token_embedding_size')
+        return self.get_hyper('code_vector_size')
+        # return self.get_hyper('token_embedding_size')
 
     def make_code2vec_model(self, is_train: bool=False) -> tf.Tensor:
         with tf.compat.v1.variable_scope("code2vec_encoder"):

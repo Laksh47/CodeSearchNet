@@ -17,9 +17,14 @@ from .encoder import Encoder, QueryType
 class SeqEncoder(Encoder):
     @classmethod
     def get_default_hyperparameters(cls) -> Dict[str, Any]:
+        EMBEDDINGS_SIZE = 128
+        TOKEN_EMBEDDINGS_SIZE = EMBEDDINGS_SIZE
+        PATH_EMBEDDINGS_SIZE = EMBEDDINGS_SIZE
+        CODE_VECTOR_SIZE = PATH_EMBEDDINGS_SIZE + 2 * TOKEN_EMBEDDINGS_SIZE
+
         encoder_hypers = { 'token_vocab_size': 10000,
                            'token_vocab_count_threshold': 10,
-                           'token_embedding_size': 128,
+                           'token_embedding_size': CODE_VECTOR_SIZE,
 
                            'use_subtokens': False,
                            'mark_subtoken_end': False,
