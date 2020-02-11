@@ -1,1 +1,1 @@
-/home/larumuga/Desktop/code2vec_features/valid
+/home/larumuga/Desktop/sample_code2vec/valid
