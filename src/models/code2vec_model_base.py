@@ -95,7 +95,7 @@ class Code2VecModelBase(ABC):
                 'loss': 'softmax',  # One of softmax, cosine, max-margin
                 'margin': 1,
                 'max_epochs': 500,
-                'patience': 5,
+                'patience': 20,
 
                 # Fraction of samples for which the query should be the function name instead of the docstring:
                 'fraction_using_func_name': 0.1,
@@ -938,13 +938,15 @@ class Code2VecModelBase(ABC):
                 language = 'python'
 
             if path_contexts is not None:
-                function_name = sample_to_parse.get('func_name')
+                if path_contexts == '':
+                    path_contexts = 'void,0,void'
+                # function_name = sample_to_parse.get('func_name')
                 return self.__code_encoder_type.load_data_from_sample(
                     "code",
                     self.hyperparameters,
                     self.__per_code_language_metadata[language],
                     path_contexts,
-                    function_name,
+                    'None',
                     result_holder=result_holder,
                     is_test=True)
             else:

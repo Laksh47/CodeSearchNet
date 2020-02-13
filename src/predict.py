@@ -64,6 +64,8 @@ from wandb.apis import InternalApi
 from dataextraction.python.parse_python_data import tokenize_docstring_from_string
 import model_restore_helper
 
+import json
+
 def query_model(query, model, indices, language, topk=100):
     query_embedding = model.get_query_representations([{'docstring_tokens': tokenize_docstring_from_string(query),
                                                         'language': language}])[0]
@@ -115,8 +117,22 @@ if __name__ == '__main__':
     predictions = []
     for language in ['java']:
         print("Evaluating language: %s" % language)
-        definitions = pickle.load(open('../resources/data/{}_dedupe_definitions_v2.pkl'.format(language), 'rb'))
-        indexes = [{'code_tokens': d['function_tokens'], 'language': d['language']} for d in tqdm(definitions)]
+        # lines = open('/home/larumuga/Desktop/test_hashed_java_dedupe_definitions_v2.jsonl', 'r').readlines()
+        indexes = []
+        definitions = []
+        i = 1
+        with open('/home/larumuga/Desktop/short_java_dedupe_definitions_v2.jsonl') as fileobj:
+            for line in fileobj:
+                d = json.loads(line)
+                obj = {'path_contexts': d['path_contexts'], 'language': d['language']}
+                def_obj = {'identifier': d['identifier'], 'url': d['url']}
+                indexes.append(obj)
+                definitions.append(def_obj)
+                if i % 10000 == 0:
+                    print(i, 'lines finished')
+                i += 1
+        # indexes = [ for d in tqdm(definitions)]
+        print(len(indexes), 'indexes being generated')
         code_representations = model.get_code_representations(indexes)
 
         indices = AnnoyIndex(code_representations[0].shape[0], 'angular')

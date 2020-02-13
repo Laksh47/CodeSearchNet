@@ -21,18 +21,18 @@ IDENTIFIER_TOKEN_REGEX = re.compile('[_a-zA-Z][_a-zA-Z0-9]*')
 class Code2VecEncoder(Code2VecEncoderBase):
     @classmethod
     def get_default_hyperparameters(cls) -> Dict[str, Any]:
-        EMBEDDINGS_SIZE = 128
+        EMBEDDINGS_SIZE = 256
         TOKEN_EMBEDDINGS_SIZE = EMBEDDINGS_SIZE
         PATH_EMBEDDINGS_SIZE = EMBEDDINGS_SIZE
         CODE_VECTOR_SIZE = PATH_EMBEDDINGS_SIZE + 2 * TOKEN_EMBEDDINGS_SIZE
 
         encoder_hypers = {
-            'nbow_pool_mode': 'weighted_mean',
-            'token_vocab_size': 10000,
+            # 'nbow_pool_mode': 'weighted_mean',
+            'token_vocab_size': 100000,
             'token_vocab_count_threshold': 10,
             'token_embedding_size': TOKEN_EMBEDDINGS_SIZE,
 
-            'path_vocab_size': 10000,
+            'path_vocab_size': 100000,
             'path_vocab_count_threshold': 1,
             'path_embedding_size': PATH_EMBEDDINGS_SIZE,
 
@@ -202,10 +202,12 @@ class Code2VecEncoder(Code2VecEncoderBase):
         source_tokens = []
         paths = []
         target_tokens = []
+        # import pdb; pdb.set_trace()
 
         parts = path_contexts.split(" ")
         # method_name = parts[0]
-        contexts = parts[1:]
+        # contexts = parts[1:]
+        contexts = parts # This line for short dedup file (already has hashed paths and func name removed)
 
         for context in contexts[:max_paths]:
             # context = context.replace('METHOD_NAME', method_name)
@@ -214,10 +216,13 @@ class Code2VecEncoder(Code2VecEncoderBase):
             target_token = context_parts[2]
             path = context_parts[1]
 
-            hashed_path = java_string_hashcode(path)
+            # hashed_path = java_string_hashcode(path)
+            hashed_path = int(path)
             source_tokens.append(source_token)
             target_tokens.append(target_token)
             paths.append(hashed_path)
+
+        # import pdb; pdb.set_trace()
 
         return (source_tokens, paths, target_tokens)
 
@@ -268,8 +273,10 @@ class Code2VecEncoder(Code2VecEncoderBase):
                               function_name: Optional[str],
                               result_holder: Dict[str, Any],
                               is_test: bool = True) -> bool:
-
-        data_to_load = cls.get_path_tokens(path_contexts, hyperparameters[f'{encoder_label}_max_num_paths'])
+        try:
+            data_to_load = cls.get_path_tokens(path_contexts, hyperparameters[f'{encoder_label}_max_num_paths'])
+        except IndexError as e:
+            import pdb; pdb.set_trace()
 
         source_tokens, paths, target_tokens = \
                 convert_and_pad_path_contexts(metadata['token_vocab'], metadata['path_vocab'], data_to_load,

@@ -17,7 +17,7 @@ from .encoder import Encoder, QueryType
 class SeqEncoder(Encoder):
     @classmethod
     def get_default_hyperparameters(cls) -> Dict[str, Any]:
-        EMBEDDINGS_SIZE = 128
+        EMBEDDINGS_SIZE = 256
         TOKEN_EMBEDDINGS_SIZE = EMBEDDINGS_SIZE
         PATH_EMBEDDINGS_SIZE = EMBEDDINGS_SIZE
         CODE_VECTOR_SIZE = PATH_EMBEDDINGS_SIZE + 2 * TOKEN_EMBEDDINGS_SIZE
