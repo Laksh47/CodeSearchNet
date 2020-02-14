@@ -1,5 +1,5 @@
 [default]
 project = CodeSearchNet
 entity = laksh47
-disabled = true
+base_url = https://api.wandb.ai
 

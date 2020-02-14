@@ -120,7 +120,6 @@ if __name__ == '__main__':
         # lines = open('/home/larumuga/Desktop/test_hashed_java_dedupe_definitions_v2.jsonl', 'r').readlines()
         indexes = []
         definitions = []
-        i = 1
         with open('/home/larumuga/Desktop/short_java_dedupe_definitions_v2.jsonl') as fileobj:
             for line in fileobj:
                 d = json.loads(line)
@@ -128,9 +127,6 @@ if __name__ == '__main__':
                 def_obj = {'identifier': d['identifier'], 'url': d['url']}
                 indexes.append(obj)
                 definitions.append(def_obj)
-                if i % 10000 == 0:
-                    print(i, 'lines finished')
-                i += 1
         # indexes = [ for d in tqdm(definitions)]
         print(len(indexes), 'indexes being generated')
         code_representations = model.get_code_representations(indexes)

@@ -19,6 +19,7 @@ SetSimilaritySearch = "*"
 Pygments = "*"
 tensorflow-gpu = "==2.0.0"
 annoy = "*"
+sentencepiece = "*"
 
 [requires]
 python_version = "3.6"
