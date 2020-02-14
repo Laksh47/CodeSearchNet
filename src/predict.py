@@ -131,6 +131,8 @@ if __name__ == '__main__':
         print(len(indexes), 'indexes being generated')
         code_representations = model.get_code_representations(indexes)
 
+        pickle.dump(code_representations, open('../resources/code_representations.pkl', 'wb'))
+
         indices = AnnoyIndex(code_representations[0].shape[0], 'angular')
         for index, vector in tqdm(enumerate(code_representations)):
             if vector is not None:
