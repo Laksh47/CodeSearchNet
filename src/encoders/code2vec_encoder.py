@@ -204,11 +204,11 @@ class Code2VecEncoder(Code2VecEncoderBase):
         target_tokens = []
 
         parts = path_contexts.split(" ")
-        # method_name = parts[0]
+        method_name = parts[0]
         contexts = parts[1:]
 
         for context in contexts[:max_paths]:
-            # context = context.replace('METHOD_NAME', method_name)
+            context = context.replace('METHOD_NAME', method_name)
             context_parts = context.split(",")
             source_token = context_parts[0]
             target_token = context_parts[2]
