@@ -27,7 +27,7 @@ class Code2VecEncoder(Code2VecEncoderBase):
         CODE_VECTOR_SIZE = PATH_EMBEDDINGS_SIZE + 2 * TOKEN_EMBEDDINGS_SIZE
 
         encoder_hypers = {
-            'nbow_pool_mode': 'weighted_mean',
+            # 'nbow_pool_mode': 'weighted_mean',
             'token_vocab_size': 10000,
             'token_vocab_count_threshold': 10,
             'token_embedding_size': TOKEN_EMBEDDINGS_SIZE,
