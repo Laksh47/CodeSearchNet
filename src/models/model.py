@@ -92,10 +92,10 @@ class Model(ABC):
                 'learning_rate_decay': 0.98,
                 'momentum': 0.85,
                 'gradient_clip': 1,
-                'loss': 'softmax',  # One of softmax, cosine, max-margin
+                'loss': 'triplet',  # One of softmax, cosine, max-margin
                 'margin': 1,
                 'max_epochs': 500,
-                'patience': 5,
+                'patience': 15,
 
                 # Fraction of samples for which the query should be the function name instead of the docstring:
                 'fraction_using_func_name': 0.1,

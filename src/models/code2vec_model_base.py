@@ -92,10 +92,10 @@ class Code2VecModelBase(ABC):
                 'learning_rate_decay': 0.98,
                 'momentum': 0.85,
                 'gradient_clip': 1,
-                'loss': 'softmax',  # One of softmax, cosine, max-margin
+                'loss': 'triplet',  # One of softmax, cosine, max-margin
                 'margin': 1,
                 'max_epochs': 500,
-                'patience': 5,
+                'patience': 15,
 
                 # Fraction of samples for which the query should be the function name instead of the docstring:
                 'fraction_using_func_name': 0.1,
@@ -374,6 +374,7 @@ class Code2VecModelBase(ABC):
             raise Exception('Unknown optimizer "%s".' % (self.hyperparameters['optimizer']))
 
         # Calculate and clip gradients
+        # import pdb; pdb.set_trace()
         trainable_vars = self.sess.graph.get_collection(tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES)
         gradients = tf.gradients(ys=self.ops['loss'], xs=trainable_vars)
         clipped_gradients, _ = tf.clip_by_global_norm(gradients, self.hyperparameters['gradient_clip'])
@@ -389,6 +390,7 @@ class Code2VecModelBase(ABC):
                                         dtype=tf.float32)
 
             pruned_clipped_gradients.append((gradient, trainable_var))
+        # import pdb; pdb.set_trace()
         self.ops['train_step'] = optimizer.apply_gradients(pruned_clipped_gradients)
 
     def load_metadata(self, data_dirs: List[RichPath], max_files_per_dir: Optional[int] = None, parallelize: bool = True) -> None:

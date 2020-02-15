@@ -13,7 +13,7 @@ class Code2VecModel(Code2VecModelBase):
         model_hypers = {
             'code_use_subtokens': False,
             'code_mark_subtoken_end': False,
-            'loss': 'cosine',
+            'loss': 'triplet',
             'batch_size': 200
         }
         hypers.update(super().get_default_hyperparameters())
