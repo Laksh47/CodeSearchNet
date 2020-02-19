@@ -8,6 +8,29 @@ Detailed log follows:
 
 ================================================================================
 --------------------------------------------------------------------------------
+Processing file 'cbow_seq_encoder.py'
+ outputting to 'cbow_seq_encoder.py'
+--------------------------------------------------------------------------------
+
+22:13: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+27:32: INFO: Added keywords to args of function 'tf.reduce_sum'
+33:41: INFO: Added keywords to args of function 'tf.pad'
+38:41: INFO: Added keywords to args of function 'tf.transpose'
+51:15: INFO: Added keywords to args of function 'tf.reduce_sum'
+--------------------------------------------------------------------------------
+
+
+
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 1 files
+Detected 0 issues that require attention
+--------------------------------------------------------------------------------
+================================================================================
+Detailed log follows:
+
+================================================================================
+--------------------------------------------------------------------------------
 Processing file 'self_att_encoder.py'
  outputting to 'self_att_encoder.py'
 --------------------------------------------------------------------------------
@@ -47,4 +70,5 @@ The calls have been converted to compat.v1 for safety (even though they may alre
 
 76:15: WARNING: tf.nn.embedding_lookup requires manual check. `partition_strategy` has been removed from tf.nn.embedding_lookup.  The 'div' strategy will be used by default.
 --------------------------------------------------------------------------------
+
 

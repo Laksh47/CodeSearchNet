@@ -3,3 +3,4 @@ from .code2vec_encoder_base import Code2VecEncoderBase
 from .nbow_seq_encoder import NBoWEncoder
 from .code2vec_encoder import Code2VecEncoder
 from .self_att_encoder import SelfAttentionEncoder
+from .cbow_seq_encoder import CBoWEncoder
