@@ -1,0 +1,63 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 1 files
+Detected 6 issues that require attention
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+File: bert_self_attention.py
+--------------------------------------------------------------------------------
+bert_self_attention.py:321:9: WARNING: tf.contrib.layers.layer_norm requires manual check. (Manual edit required) `tf.contrib.layers.layer_norm` has been deprecated, and its implementation has been integrated with `tf.keras.layers.LayerNormalization` in TensorFlow 2.0. Note that, the default value of `epsilon` is changed to `1e-3` in the new API from `1e-12`, and this may introduce numerical differences. Please check the new API and use that instead.
+bert_self_attention.py:321:9: ERROR: Using member tf.contrib.layers.layer_norm in deprecated module tf.contrib. tf.contrib.layers.layer_norm cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+bert_self_attention.py:367:20: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+bert_self_attention.py:377:13: WARNING: tf.nn.embedding_lookup requires manual check. `partition_strategy` has been removed from tf.nn.embedding_lookup.  The 'div' strategy will be used by default.
+bert_self_attention.py:439:23: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+bert_self_attention.py:453:31: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+================================================================================
+Detailed log follows:
+
+================================================================================
+--------------------------------------------------------------------------------
+Processing file 'bert_self_attention.py'
+ outputting to 'bert_self_attention.py'
+--------------------------------------------------------------------------------
+
+94:9: INFO: Renamed 'tf.gfile.GFile' to 'tf.io.gfile.GFile'
+178:9: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+179:11: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+206:11: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+234:11: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+238:29: INFO: Renamed 'tf.layers.dense' to 'tf.compat.v1.layers.dense'
+315:11: INFO: Changing keep_prob arg of tf.nn.dropout to rate, and recomputing value.
+
+321:9: WARNING: tf.contrib.layers.layer_norm requires manual check. (Manual edit required) `tf.contrib.layers.layer_norm` has been deprecated, and its implementation has been integrated with `tf.keras.layers.LayerNormalization` in TensorFlow 2.0. Note that, the default value of `epsilon` is changed to `1e-3` in the new API from `1e-12`, and this may introduce numerical differences. Please check the new API and use that instead.
+321:9: ERROR: Using member tf.contrib.layers.layer_norm in deprecated module tf.contrib. tf.contrib.layers.layer_norm cannot be converted automatically. tf.contrib will not be distributed with TensorFlow 2.0, please consider an alternative in non-contrib TensorFlow, a community-maintained repository such as tensorflow/addons, or fork the required code.
+334:9: INFO: tf.truncated_normal_initializer requires manual check. Initializers no longer have the dtype argument in the constructor or partition_info argument in the __call__ method.
+The calls have been converted to compat.v1 for safety (even though they may already have been correct).
+334:9: INFO: Renamed 'tf.truncated_normal_initializer' to 'tf.compat.v1.truncated_normal_initializer'
+367:20: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+367:20: INFO: Renamed 'tf.get_variable' to 'tf.compat.v1.get_variable'
+377:13: INFO: Added keywords to args of function 'tf.nn.embedding_lookup'
+377:13: WARNING: tf.nn.embedding_lookup requires manual check. `partition_strategy` has been removed from tf.nn.embedding_lookup.  The 'div' strategy will be used by default.
+439:23: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+439:23: INFO: Renamed 'tf.get_variable' to 'tf.compat.v1.get_variable'
+453:31: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+453:31: INFO: Renamed 'tf.get_variable' to 'tf.compat.v1.get_variable'
+599:20: INFO: Added keywords to args of function 'tf.transpose'
+631:16: INFO: Renamed 'tf.layers.dense' to 'tf.compat.v1.layers.dense'
+639:14: INFO: Renamed 'tf.layers.dense' to 'tf.compat.v1.layers.dense'
+647:16: INFO: Renamed 'tf.layers.dense' to 'tf.compat.v1.layers.dense'
+697:16: INFO: Added keywords to args of function 'tf.transpose'
+703:18: INFO: Added keywords to args of function 'tf.transpose'
+792:9: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+795:11: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+797:13: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+822:13: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+823:29: INFO: Renamed 'tf.layers.dense' to 'tf.compat.v1.layers.dense'
+831:11: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+832:30: INFO: Renamed 'tf.layers.dense' to 'tf.compat.v1.layers.dense'
+839:11: INFO: Renamed 'tf.variable_scope' to 'tf.compat.v1.variable_scope'
+840:23: INFO: Renamed 'tf.layers.dense' to 'tf.compat.v1.layers.dense'
+891:14: INFO: Added keywords to args of function 'tf.shape'
+947:17: INFO: Renamed 'tf.get_variable_scope' to 'tf.compat.v1.get_variable_scope'
+--------------------------------------------------------------------------------
+

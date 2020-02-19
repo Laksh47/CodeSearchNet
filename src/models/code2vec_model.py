@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional
 
-from encoders import NBoWEncoder, Code2VecEncoder
+from encoders import NBoWEncoder, Code2VecEncoder, SelfAttentionEncoder
 from .code2vec_model_base import Code2VecModelBase
 
 
